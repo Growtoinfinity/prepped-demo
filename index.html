@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PREPPED. — Weekly Chef-Made Meals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --sky: #6CABDD;
+    --sky-dark: #4A90C8;
+    --sky-soft: #E8F2FA;
+    --navy: #0E1B3D;
+    --navy-soft: #1C2C5B;
+    --ink: #0A0E27;
+    --muted: #6B7280;
+    --cream: #FAFAF7;
+    --white: #FFFFFF;
+    --border: #E8E6DE;
+    --shadow-sm: 0 1px 2px rgba(14, 27, 61, 0.04);
+    --shadow-md: 0 4px 24px rgba(14, 27, 61, 0.06);
+    --shadow-lg: 0 20px 60px rgba(14, 27, 61, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ============ HEADER ============ */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250, 250, 247, 0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+  .logo .dot { color: var(--sky); }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--navy);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--sky); }
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .week-badge {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .week-badge strong { color: var(--navy); font-weight: 600; }
+
+  /* ============ HERO ============ */
+  .hero {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 80px 48px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sky-dark);
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+  .hero-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--sky);
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(56px, 8vw, 112px);
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: var(--navy);
+    max-width: 1100px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--sky);
+  }
+  .hero-meta {
+    display: flex;
+    gap: 64px;
+    margin-top: 48px;
+    max-width: 720px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-meta-col h4 {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .hero-meta-col p {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    color: var(--navy);
+  }
+
+  /* ============ MENU LAYOUT ============ */
+  .menu-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 48px 120px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .categories { display: flex; flex-direction: column; gap: 80px; }
+
+  .category-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .category-title {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .category-title .num {
+    font-size: 14px;
+    color: var(--sky);
+    letter-spacing: 0.1em;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+  }
+  .category-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+  }
+
+  /* ============ MEAL CARD ============ */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1), box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--sky);
+  }
+  .card.has-qty {
+    border-color: var(--sky);
+    box-shadow: 0 0 0 1px var(--sky), var(--shadow-md);
+  }
+  .card-img {
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #E8F2FA 0%, #C7DDF0 60%, #A8CCE8 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(14, 27, 61, 0.08) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .card-img img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(.2,.8,.2,1), opacity 0.4s;
+    opacity: 0;
+    z-index: 1;
+  }
+  .card-img img.loaded { opacity: 1; }
+  .card:hover .card-img img { transform: scale(1.06); }
+  .card-img-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    opacity: 0.35;
+    z-index: 0;
+  }
+  .card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    color: var(--navy);
+    font-size: 10px;
+    padding: 5px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    z-index: 3;
+  }
+  .card-qty-pill {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--sky);
+    color: var(--white);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.25s, transform 0.25s cubic-bezier(.3,1.5,.5,1);
+    box-shadow: 0 4px 12px rgba(108, 171, 221, 0.4);
+    z-index: 3;
+  }
+  .card.has-qty .card-qty-pill {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+  }
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 4px;
+    flex: 1;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  .card-price {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--navy);
+  }
+
+  /* ============ QTY CONTROL ============ */
+  .qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px;
+    gap: 2px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .qty.active { border-color: var(--sky); background: var(--sky-soft); }
+
+  .qty-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+    font-family: inherit;
+  }
+  .qty-btn:hover { background: var(--sky); color: var(--white); }
+  .qty-btn:active { transform: scale(0.88); }
+  .qty-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .qty-count {
+    min-width: 22px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============ SUMMARY PANEL ============ */
+  .summary {
+    position: sticky;
+    top: 100px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+  .summary-header {
+    padding: 28px;
+    background: var(--navy);
+    color: var(--white);
+    position: relative;
+  }
+  .summary-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top right, rgba(108, 171, 221, 0.25) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .summary-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .summary-header .kicker {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sky);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .summary-header p {
+    font-size: 13px;
+    opacity: 0.7;
+    position: relative;
+  }
+
+  .summary-body {
+    padding: 24px 28px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  .summary-body::-webkit-scrollbar { width: 4px; }
+  .summary-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--muted);
+  }
+  .empty-state .emoji { font-size: 32px; margin-bottom: 12px; display: block; filter: grayscale(0.3); }
+  .empty-state p { font-size: 14px; line-height: 1.5; }
+  .empty-state p em { font-family: 'Fraunces', serif; color: var(--navy); font-style: italic; }
+
+  .summary-item {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+    animation: slideIn 0.35s cubic-bezier(.2,.8,.2,1);
+  }
+  .summary-item:last-child { border-bottom: none; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .summary-qty {
+    background: var(--sky-soft);
+    color: var(--sky-dark);
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 4px 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .summary-name {
+    font-size: 13px;
+    color: var(--navy);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .summary-name span {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .summary-price {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .summary-totals {
+    padding: 20px 28px;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .total-row span:last-child {
+    color: var(--navy);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .total-row.grand {
+    padding-top: 14px;
+    margin-top: 4px;
+    border-top: 1px solid var(--border);
+    font-size: 15px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .total-row.grand span:last-child {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--sky-dark);
+  }
+
+  .checkout-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 18px 24px;
+    background: var(--sky);
+    color: var(--white);
+    border: none;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .checkout-btn::after {
+    content: '→';
+    transition: transform 0.25s;
+    font-size: 18px;
+  }
+  .checkout-btn:hover:not(:disabled) {
+    background: var(--sky-dark);
+    box-shadow: 0 8px 24px rgba(108, 171, 221, 0.4);
+  }
+  .checkout-btn:hover:not(:disabled)::after { transform: translateX(4px); }
+  .checkout-btn:active:not(:disabled) { transform: scale(0.98); }
+  .checkout-btn:disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+  .checkout-btn:disabled::after { display: none; }
+
+  .secure-note {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .footer .logo { font-size: 18px; }
+
+  /* ============ MODAL ============ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 14, 39, 0.6);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open { display: flex; opacity: 1; }
+  .modal {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 48px;
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1);
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal .check {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--sky-soft);
+    color: var(--sky-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 24px;
+  }
+  .modal h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .modal p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .modal .order-id {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--sky-dark);
+  }
+  .modal button {
+    padding: 14px 32px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .modal button:hover { background: var(--navy-soft); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1100px) {
+    .menu-wrap { grid-template-columns: 1fr; }
+    .summary { position: static; margin-top: 40px; }
+  }
+  @media (max-width: 720px) {
+    .nav-inner { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 48px 24px 32px; }
+    .hero-meta { gap: 32px; flex-wrap: wrap; }
+    .menu-wrap { padding: 0 24px 64px; gap: 48px; }
+    .category-title { font-size: 32px; }
+    .cards { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .footer { padding: 32px 24px; flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">PREPPED<span class="dot">.</span></div>
+    <ul class="nav-links">
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#">How It Works</a></li>
+      <li><a href="#">Chefs</a></li>
+      <li><a href="#">Journal</a></li>
+    </ul>
+    <div class="nav-cta">
+      <span class="week-badge">Delivering · <strong>Sun 19 Apr</strong></span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Week 16 · Spring Edition</div>
+  <h1>This week, <em>eat better</em><br>without the fuss.</h1>
+  <div class="hero-meta">
+    <div class="hero-meta-col">
+      <h4>Delivered</h4>
+      <p>Every Sunday, chilled</p>
+    </div>
+    <div class="hero-meta-col">
+      <h4>Prepped By</h4>
+      <p>Chef Rania & team</p>
+    </div>
+    <div class="hero-meta-col">
+      <h4>Lasts</h4>
+      <p>Up to 6 days fresh</p>
+    </div>
+  </div>
+</section>
+
+<!-- MENU + SUMMARY -->
+<div class="menu-wrap" id="menu">
+  <div class="categories" id="categories"></div>
+
+  <aside class="summary" id="summary">
+    <div class="summary-header">
+      <div class="kicker">Your Box</div>
+      <h3>This Week's Order</h3>
+      <p id="item-count-text">Start building your menu</p>
+    </div>
+    <div class="summary-body" id="summary-body">
+      <div class="empty-state" id="empty-state">
+        <span class="emoji">🥣</span>
+        <p>Nothing selected yet.<br><em>Pick a few dishes</em> to get started.</p>
+      </div>
+    </div>
+    <div class="summary-totals">
+      <div class="total-row"><span>Subtotal</span><span id="subtotal">£0.00</span></div>
+      <div class="total-row"><span>Delivery</span><span id="delivery">£0.00</span></div>
+      <div class="total-row"><span>Fresh guarantee</span><span>Included</span></div>
+      <div class="total-row grand"><span>Total</span><span id="grand-total">£0.00</span></div>
+      <button class="checkout-btn" id="checkout" disabled>Proceed to Payment</button>
+      <div class="secure-note">🔒 SECURE CHECKOUT · STRIPE</div>
+    </div>
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="logo">PREPPED<span class="dot">.</span></div>
+  <div>© 2026 Prepped Kitchen Co. · Made in small batches</div>
+  <div>hello@prepped.kitchen</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="check">✓</div>
+    <h2>Payment confirmed</h2>
+    <p>Your order <span class="order-id" id="order-id">#PR-4721</span> is being prepped.<br>Delivery arrives Sunday between 8–11am.</p>
+    <button onclick="closeModal()">Back to menu</button>
+  </div>
+</div>
+
+<script>
+  // ================= DATA =================
+  const MENU = {
+    breakfast: {
+      title: 'Breakfast',
+      num: '01',
+      sub: 'to start the day right',
+      items: [
+        { id: 'b1', name: 'Greek Yogurt Parfait', desc: 'Local honey, house granola, fresh berries', price: 6.50, tag: 'High Protein', emoji: '🥣',
+          img: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=900&q=85&auto=format&fit=crop' },
+        { id: 'b2', name: 'Avocado Smash Toast', desc: 'Sourdough, poached egg, chilli flakes, dukkah', price: 7.80, tag: 'Vegetarian', emoji: '🥑',
+          img: 'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=900&q=85&auto=format&fit=crop' },
+        { id: 'b3', name: 'Cacao Overnight Oats', desc: 'Almond butter, banana, cacao nibs, oat milk', price: 5.50, tag: 'Vegan', emoji: '🥜',
+          img: 'https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=900&q=85&auto=format&fit=crop' },
+        { id: 'b4', name: 'Full Brunch Bowl', desc: 'Scrambled eggs, chorizo, beans, roast tomato', price: 9.20, tag: 'Hearty', emoji: '🍳',
+          img: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=900&q=85&auto=format&fit=crop' },
+        { id: 'b5', name: 'Berry Smoothie Bowl', desc: 'Açaí, coconut yogurt, seasonal fruit, seeds', price: 7.00, tag: 'New', emoji: '🫐',
+          img: 'https://images.unsplash.com/photo-1490323914169-4ef47e3bb123?w=900&q=85&auto=format&fit=crop' },
+      ]
+    },
+    main: {
+      title: 'Main Course',
+      num: '02',
+      sub: 'the real deal',
+      items: [
+        { id: 'm1', name: 'Herb-Crusted Salmon', desc: 'Lemon quinoa, roast tenderstem, dill oil', price: 14.50, tag: "Chef's Pick", emoji: '🐟',
+          img: 'https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=900&q=85&auto=format&fit=crop' },
+        { id: 'm2', name: 'Korean BBQ Chicken', desc: 'Jasmine rice, pickled kimchi slaw, gochujang', price: 12.80, tag: 'Spicy', emoji: '🍗',
+          img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=900&q=85&auto=format&fit=crop' },
+        { id: 'm3', name: 'Mediterranean Bowl', desc: 'Falafel, hummus, tabbouleh, warm pita', price: 11.20, tag: 'Vegan', emoji: '🥗',
+          img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=85&auto=format&fit=crop' },
+        { id: 'm4', name: 'Sirloin & Truffle Mash', desc: 'Grass-fed steak, charred greens, peppercorn', price: 16.90, tag: 'Premium', emoji: '🥩',
+          img: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=85&auto=format&fit=crop' },
+        { id: 'm5', name: 'Pesto Pasta Primavera', desc: 'Fresh basil, seasonal veg, pine nuts, parmesan', price: 10.50, tag: 'Vegetarian', emoji: '🍝',
+          img: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=900&q=85&auto=format&fit=crop' },
+      ]
+    },
+    dessert: {
+      title: 'Dessert',
+      num: '03',
+      sub: 'worth saving room for',
+      items: [
+        { id: 'd1', name: 'Dark Chocolate Tart', desc: 'Sea salt, raspberry coulis, shortcrust', price: 5.80, tag: 'Indulgent', emoji: '🍫',
+          img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=900&q=85&auto=format&fit=crop' },
+        { id: 'd2', name: 'Tiramisu Cup', desc: 'Mascarpone, espresso, cocoa, savoiardi', price: 5.50, tag: 'Classic', emoji: '☕',
+          img: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=900&q=85&auto=format&fit=crop' },
+        { id: 'd3', name: 'Lemon Cheesecake', desc: 'Graham crust, berry compote, lemon zest', price: 6.20, tag: 'Fresh', emoji: '🍋',
+          img: 'https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=900&q=85&auto=format&fit=crop' },
+        { id: 'd4', name: 'Crème Brûlée', desc: 'Madagascan vanilla, caramelised sugar crust', price: 6.50, tag: "Chef's Pick", emoji: '🍮',
+          img: 'https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=900&q=85&auto=format&fit=crop' },
+        { id: 'd5', name: 'Seasonal Pavlova', desc: 'Chantilly cream, passionfruit, meringue', price: 5.90, tag: 'New', emoji: '🍓',
+          img: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=900&q=85&auto=format&fit=crop' },
+      ]
+    }
+  };
+
+  const DELIVERY_FEE = 3.50;
+  const FREE_DELIVERY_THRESHOLD = 40;
+
+  const cart = {}; // id -> qty
+
+  // ================= RENDER MENU =================
+  const categoriesEl = document.getElementById('categories');
+  Object.entries(MENU).forEach(([key, cat]) => {
+    const section = document.createElement('section');
+    section.innerHTML = `
+      <div class="category-header">
+        <div class="category-title">
+          <span class="num">${cat.num}</span>
+          ${cat.title}
+        </div>
+        <div class="category-sub">${cat.sub}</div>
+      </div>
+      <div class="cards" id="cards-${key}"></div>
+    `;
+    categoriesEl.appendChild(section);
+
+    const cardsEl = section.querySelector(`#cards-${key}`);
+    cat.items.forEach(item => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.id = `card-${item.id}`;
+      card.innerHTML = `
+        <div class="card-img">
+          <div class="card-img-fallback">${item.emoji}</div>
+          <img src="${item.img}" alt="${item.name}" loading="lazy"
+               onload="this.classList.add('loaded')"
+               onerror="this.remove()">
+          <span class="card-badge">${item.tag}</span>
+          <span class="card-qty-pill" id="pill-${item.id}">0</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${item.name}</div>
+          <div class="card-desc">${item.desc}</div>
+          <div class="card-footer">
+            <div class="card-price">£${item.price.toFixed(2)}</div>
+            <div class="qty" id="qty-${item.id}">
+              <button class="qty-btn" data-action="dec" data-id="${item.id}" aria-label="Decrease">−</button>
+              <span class="qty-count" id="count-${item.id}">0</span>
+              <button class="qty-btn" data-action="inc" data-id="${item.id}" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      `;
+      cardsEl.appendChild(card);
+    });
+  });
+
+  // ================= CART LOGIC =================
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.qty-btn');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    cart[id] = cart[id] || 0;
+    if (action === 'inc') cart[id]++;
+    else if (action === 'dec' && cart[id] > 0) cart[id]--;
+    if (cart[id] === 0) delete cart[id];
+    updateUI(id);
+  });
+
+  function getItem(id) {
+    for (const cat of Object.values(MENU)) {
+      const found = cat.items.find(i => i.id === id);
+      if (found) return { ...found, category: cat.title };
+    }
+  }
+
+  function updateUI(changedId) {
+    // update specific card
+    if (changedId) {
+      const qty = cart[changedId] || 0;
+      document.getElementById(`count-${changedId}`).textContent = qty;
+      const pill = document.getElementById(`pill-${changedId}`);
+      pill.textContent = qty;
+      const qtyBox = document.getElementById(`qty-${changedId}`);
+      const card = document.getElementById(`card-${changedId}`);
+      qtyBox.classList.toggle('active', qty > 0);
+      card.classList.toggle('has-qty', qty > 0);
+      // disable minus at 0
+      qtyBox.querySelector('[data-action="dec"]').disabled = qty === 0;
+    }
+
+    // summary
+    const summaryBody = document.getElementById('summary-body');
+    const entries = Object.entries(cart);
+    const totalItems = entries.reduce((s, [,q]) => s + q, 0);
+
+    document.getElementById('item-count-text').textContent =
+      totalItems === 0 ? 'Start building your menu'
+      : `${totalItems} item${totalItems > 1 ? 's' : ''} · ready to deliver`;
+
+    if (entries.length === 0) {
+      summaryBody.innerHTML = `
+        <div class="empty-state">
+          <span class="emoji">🥣</span>
+          <p>Nothing selected yet.<br><em>Pick a few dishes</em> to get started.</p>
+        </div>`;
+    } else {
+      summaryBody.innerHTML = entries.map(([id, q]) => {
+        const item = getItem(id);
+        return `
+          <div class="summary-item">
+            <div class="summary-qty">${q}</div>
+            <div class="summary-name">
+              ${item.name}
+              <span>${item.category}</span>
+            </div>
+            <div class="summary-price">£${(item.price * q).toFixed(2)}</div>
+          </div>`;
+      }).join('');
+    }
+
+    // totals
+    const subtotal = entries.reduce((s, [id, q]) => s + getItem(id).price * q, 0);
+    const delivery = subtotal === 0 ? 0 : (subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE);
+    const grand = subtotal + delivery;
+
+    document.getElementById('subtotal').textContent = `£${subtotal.toFixed(2)}`;
+    document.getElementById('delivery').textContent = delivery === 0
+      ? (subtotal === 0 ? '£0.00' : 'Free')
+      : `£${delivery.toFixed(2)}`;
+    document.getElementById('grand-total').textContent = `£${grand.toFixed(2)}`;
+    document.getElementById('checkout').disabled = totalItems === 0;
+  }
+
+  // ================= CHECKOUT =================
+  document.getElementById('checkout').addEventListener('click', () => {
+    const orderId = '#PR-' + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('order-id').textContent = orderId;
+    document.getElementById('modal').classList.add('open');
+  });
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    // reset cart
+    Object.keys(cart).forEach(id => delete cart[id]);
+    document.querySelectorAll('.qty-count').forEach(el => el.textContent = '0');
+    document.querySelectorAll('.card-qty-pill').forEach(el => el.textContent = '0');
+    document.querySelectorAll('.card').forEach(el => el.classList.remove('has-qty'));
+    document.querySelectorAll('.qty').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('[data-action="dec"]').forEach(el => el.disabled = true);
+    updateUI();
+  }
+
+  // init
+  document.querySelectorAll('[data-action="dec"]').forEach(el => el.disabled = true);
+  updateUI();
+</script>
+</body>
+</html>
