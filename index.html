@@ -559,6 +559,25 @@
     cursor: not-allowed;
   }
   .checkout-btn:disabled::after { display: none; }
+  .checkout-btn.loading {
+    background: var(--sky-dark);
+    color: white;
+    cursor: wait;
+    opacity: 1;
+  }
+  .checkout-btn.loading::after { display: none; }
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: -2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .secure-note {
     text-align: center;
@@ -649,6 +668,95 @@
   }
   .modal button:hover { background: var(--navy-soft); }
 
+  /* ============ MOBILE STICKY CTA ============ */
+  .mobile-cta {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    background: var(--navy);
+    color: white;
+    padding: 14px 20px;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transform: translateY(110%);
+    transition: transform 0.42s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 -12px 40px rgba(14, 27, 61, 0.28);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .mobile-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top right, rgba(108,171,221,0.22) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .mobile-cta.visible { transform: translateY(0); }
+  .mobile-cta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+  }
+  .mobile-cta-count {
+    font-size: 10px;
+    color: var(--sky);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .mobile-cta-total {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: white;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .mobile-cta-btn {
+    background: var(--sky);
+    color: white;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.15s;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 6px 20px rgba(108, 171, 221, 0.35);
+  }
+  .mobile-cta-btn::after {
+    content: '→';
+    font-size: 16px;
+    transition: transform 0.25s;
+  }
+  .mobile-cta-btn:hover:not(:disabled) { background: var(--sky-dark); }
+  .mobile-cta-btn:hover:not(:disabled)::after { transform: translateX(4px); }
+  .mobile-cta-btn:active:not(:disabled) { transform: scale(0.97); }
+  .mobile-cta-btn:disabled { cursor: wait; }
+  .mobile-cta-btn.loading::after { display: none; }
+
+  @media (max-width: 1100px) {
+    .mobile-cta { display: flex; }
+    body.cta-on { padding-bottom: 96px; transition: padding-bottom 0.3s; }
+  }
+
   /* ============ RESPONSIVE ============ */
   @media (max-width: 1100px) {
     .menu-wrap { grid-template-columns: 1fr; }
@@ -738,13 +846,22 @@
   <div>hello@prepped.kitchen</div>
 </footer>
 
-<!-- MODAL -->
+<!-- MOBILE STICKY CHECKOUT BAR -->
+<div class="mobile-cta" id="mobile-cta" role="region" aria-label="Cart summary">
+  <div class="mobile-cta-info">
+    <span class="mobile-cta-count" id="mobile-cta-count">0 items</span>
+    <span class="mobile-cta-total" id="mobile-cta-total">£0.00</span>
+  </div>
+  <button class="mobile-cta-btn" id="mobile-cta-btn">Checkout</button>
+</div>
+
+<!-- ERROR TOAST -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="check">✓</div>
-    <h2>Payment confirmed</h2>
-    <p>Your order <span class="order-id" id="order-id">#PR-4721</span> is being prepped.<br>Delivery arrives Sunday between 8–11am.</p>
-    <button onclick="closeModal()">Back to menu</button>
+    <div class="check" style="background:#FFE8E8;color:#C53030">!</div>
+    <h2>Something went wrong</h2>
+    <p id="error-text">We couldn't start your payment. Please try again in a moment.</p>
+    <button onclick="closeModal()">Try again</button>
   </div>
 </div>
 
@@ -932,25 +1049,76 @@
       : `£${delivery.toFixed(2)}`;
     document.getElementById('grand-total').textContent = `£${grand.toFixed(2)}`;
     document.getElementById('checkout').disabled = totalItems === 0;
+
+    // mobile sticky CTA
+    document.getElementById('mobile-cta-count').textContent =
+      totalItems === 0 ? '0 items' : `${totalItems} item${totalItems > 1 ? 's' : ''}`;
+    document.getElementById('mobile-cta-total').textContent = `£${grand.toFixed(2)}`;
+    updateMobileCta();
   }
 
+  // ================= MOBILE STICKY CTA =================
+  let isSummaryVisible = false;
+  function updateMobileCta() {
+    const hasItems = Object.keys(cart).length > 0;
+    const cta = document.getElementById('mobile-cta');
+    const show = hasItems && !isSummaryVisible;
+    cta.classList.toggle('visible', show);
+    document.body.classList.toggle('cta-on', show);
+  }
+
+  // Observe the summary panel — when it's in view, tuck the floater away
+  const summaryObserver = new IntersectionObserver((entries) => {
+    isSummaryVisible = entries[0].isIntersecting;
+    updateMobileCta();
+  }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+  summaryObserver.observe(document.getElementById('summary'));
+
   // ================= CHECKOUT =================
-  document.getElementById('checkout').addEventListener('click', () => {
-    const orderId = '#PR-' + Math.floor(1000 + Math.random() * 9000);
-    document.getElementById('order-id').textContent = orderId;
-    document.getElementById('modal').classList.add('open');
-  });
+  async function startCheckout() {
+    const mainBtn = document.getElementById('checkout');
+    const mobileBtn = document.getElementById('mobile-cta-btn');
+
+    [mainBtn, mobileBtn].forEach(b => { b.disabled = true; b.classList.add('loading'); });
+    mainBtn.innerHTML = '<span class="spinner"></span>Redirecting to Stripe';
+    mobileBtn.innerHTML = '<span class="spinner"></span>Redirecting';
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart })
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || 'Checkout failed');
+      }
+
+      const { url } = await response.json();
+      if (!url) throw new Error('No checkout URL returned');
+
+      // Redirect to Stripe's hosted checkout
+      window.location.href = url;
+    } catch (err) {
+      console.error('Checkout error:', err);
+      document.getElementById('error-text').textContent =
+        err.message || 'We couldn\u2019t start your payment. Please try again.';
+      document.getElementById('modal').classList.add('open');
+      mainBtn.disabled = false;
+      mainBtn.classList.remove('loading');
+      mainBtn.innerHTML = 'Proceed to Payment';
+      mobileBtn.disabled = false;
+      mobileBtn.classList.remove('loading');
+      mobileBtn.innerHTML = 'Checkout';
+    }
+  }
+
+  document.getElementById('checkout').addEventListener('click', startCheckout);
+  document.getElementById('mobile-cta-btn').addEventListener('click', startCheckout);
 
   function closeModal() {
     document.getElementById('modal').classList.remove('open');
-    // reset cart
-    Object.keys(cart).forEach(id => delete cart[id]);
-    document.querySelectorAll('.qty-count').forEach(el => el.textContent = '0');
-    document.querySelectorAll('.card-qty-pill').forEach(el => el.textContent = '0');
-    document.querySelectorAll('.card').forEach(el => el.classList.remove('has-qty'));
-    document.querySelectorAll('.qty').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('[data-action="dec"]').forEach(el => el.disabled = true);
-    updateUI();
   }
 
   // init
