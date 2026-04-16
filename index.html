@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PREPPED. — Weekly Chef-Made Meals</title>
+<title>Mark's Lifestyle Foods — Weekly Chef-Made Meals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet" />
@@ -659,10 +659,55 @@
     .nav-links { display: none; }
     .hero { padding: 48px 24px 32px; }
     .hero-meta { gap: 32px; flex-wrap: wrap; }
-    .menu-wrap { padding: 0 24px 64px; gap: 48px; }
+    .menu-wrap { padding: 0 24px 280px; gap: 48px; }
     .category-title { font-size: 32px; }
     .cards { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
     .footer { padding: 32px 24px; flex-direction: column; gap: 16px; }
+
+    /* Keep checkout actions always accessible on mobile */
+    .summary {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: auto;
+      margin-top: 0;
+      border-radius: 18px 18px 0 0;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      z-index: 100;
+      box-shadow: 0 -16px 34px rgba(10, 14, 39, 0.12);
+    }
+    .summary-header,
+    .summary-body {
+      display: none;
+    }
+    .summary-totals {
+      padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+      background: var(--white);
+    }
+    .summary-totals .total-row {
+      display: none;
+    }
+    .summary-totals .total-row.grand {
+      display: flex;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+      margin-bottom: 0;
+    }
+    .summary-totals .total-row.grand span:last-child {
+      font-size: 24px;
+    }
+    .checkout-btn {
+      margin-top: 12px;
+      padding: 16px 22px;
+    }
+    .secure-note {
+      margin-top: 10px;
+      font-size: 10px;
+    }
   }
 </style>
 </head>
@@ -671,7 +716,7 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
-    <div class="logo">PREPPED<span class="dot">.</span></div>
+    <div class="logo">Mark's Lifestyle Foods</div>
     <ul class="nav-links">
       <li><a href="#menu">Menu</a></li>
       <li><a href="#">How It Works</a></li>
@@ -733,9 +778,9 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="logo">PREPPED<span class="dot">.</span></div>
-  <div>© 2026 Prepped Kitchen Co. · Made in small batches</div>
-  <div>hello@prepped.kitchen</div>
+  <div class="logo">Mark's Lifestyle Foods</div>
+  <div>© 2026 Mark's Lifestyle Foods · Made in small batches</div>
+  <div>hello@markslifestylefoods.com</div>
 </footer>
 
 <!-- MODAL -->
@@ -765,7 +810,7 @@
         { id: 'b4', name: 'Full Brunch Bowl', desc: 'Scrambled eggs, chorizo, beans, roast tomato', price: 9.20, tag: 'Hearty', emoji: '🍳',
           img: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=900&q=85&auto=format&fit=crop' },
         { id: 'b5', name: 'Berry Smoothie Bowl', desc: 'Açaí, coconut yogurt, seasonal fruit, seeds', price: 7.00, tag: 'New', emoji: '🫐',
-          img: 'https://images.unsplash.com/photo-1490323914169-4ef47e3bb123?w=900&q=85&auto=format&fit=crop' },
+          img: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=900&q=85&auto=format&fit=crop' },
       ]
     },
     main: {
