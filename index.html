@@ -568,6 +568,55 @@
     letter-spacing: 0.06em;
   }
 
+  .checkout-floater {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    z-index: 130;
+    transform: translateY(140%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.28s cubic-bezier(.2,.8,.2,1), opacity 0.2s;
+  }
+  .checkout-floater.visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .checkout-floater-total {
+    min-width: 84px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .checkout-floater-total span {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .checkout-floater-total strong {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    color: var(--sky-dark);
+    font-weight: 500;
+  }
+  .checkout-btn--floater {
+    margin-top: 0;
+    padding: 14px 18px;
+    flex: 1;
+    min-height: 52px;
+  }
+
   /* ============ FOOTER ============ */
   .footer {
     border-top: 1px solid var(--border);
@@ -664,6 +713,12 @@
     .cards { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
     .footer { padding: 32px 24px; flex-direction: column; gap: 16px; }
   }
+  @media (max-width: 1100px) {
+    body.floater-visible { padding-bottom: 94px; }
+  }
+  @media (min-width: 1101px) {
+    .checkout-floater { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -720,7 +775,7 @@
         <p>Nothing selected yet.<br><em>Pick a few dishes</em> to get started.</p>
       </div>
     </div>
-    <div class="summary-totals">
+    <div class="summary-totals" id="summary-totals">
       <div class="total-row"><span>Subtotal</span><span id="subtotal">£0.00</span></div>
       <div class="total-row"><span>Delivery</span><span id="delivery">£0.00</span></div>
       <div class="total-row"><span>Fresh guarantee</span><span>Included</span></div>
@@ -729,6 +784,14 @@
       <div class="secure-note">🔒 SECURE CHECKOUT · STRIPE</div>
     </div>
   </aside>
+</div>
+
+<div class="checkout-floater" id="checkout-floater" aria-hidden="true">
+  <div class="checkout-floater-total">
+    <span>Total</span>
+    <strong id="floater-total">£0.00</strong>
+  </div>
+  <button class="checkout-btn checkout-btn--floater" id="checkout-floater-btn" disabled>Checkout</button>
 </div>
 
 <!-- FOOTER -->
@@ -808,6 +871,9 @@
   const FREE_DELIVERY_THRESHOLD = 40;
 
   const cart = {}; // id -> qty
+  let summaryTotalsInView = false;
+  let lastTotalItems = 0;
+  let lastGrandTotal = 0;
 
   // ================= RENDER MENU =================
   const categoriesEl = document.getElementById('categories');
@@ -925,6 +991,8 @@
     const subtotal = entries.reduce((s, [id, q]) => s + getItem(id).price * q, 0);
     const delivery = subtotal === 0 ? 0 : (subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE);
     const grand = subtotal + delivery;
+    lastTotalItems = totalItems;
+    lastGrandTotal = grand;
 
     document.getElementById('subtotal').textContent = `£${subtotal.toFixed(2)}`;
     document.getElementById('delivery').textContent = delivery === 0
@@ -932,14 +1000,37 @@
       : `£${delivery.toFixed(2)}`;
     document.getElementById('grand-total').textContent = `£${grand.toFixed(2)}`;
     document.getElementById('checkout').disabled = totalItems === 0;
+    refreshCheckoutFloater();
   }
 
   // ================= CHECKOUT =================
-  document.getElementById('checkout').addEventListener('click', () => {
+  function openCheckoutModal() {
     const orderId = '#PR-' + Math.floor(1000 + Math.random() * 9000);
     document.getElementById('order-id').textContent = orderId;
     document.getElementById('modal').classList.add('open');
-  });
+  }
+  document.getElementById('checkout').addEventListener('click', openCheckoutModal);
+  document.getElementById('checkout-floater-btn').addEventListener('click', openCheckoutModal);
+
+  function refreshCheckoutFloater() {
+    const floater = document.getElementById('checkout-floater');
+    const floaterBtn = document.getElementById('checkout-floater-btn');
+    const floaterTotal = document.getElementById('floater-total');
+    const canCheckout = lastTotalItems > 0;
+    const showFloater = canCheckout && !summaryTotalsInView;
+    floaterTotal.textContent = `£${lastGrandTotal.toFixed(2)}`;
+    floaterBtn.disabled = !canCheckout;
+    floater.classList.toggle('visible', showFloater);
+    floater.setAttribute('aria-hidden', String(!showFloater));
+    document.body.classList.toggle('floater-visible', showFloater);
+  }
+
+  const summaryTotals = document.getElementById('summary-totals');
+  const summaryObserver = new IntersectionObserver(entries => {
+    summaryTotalsInView = entries[0]?.isIntersecting ?? false;
+    refreshCheckoutFloater();
+  }, { threshold: 0.25 });
+  summaryObserver.observe(summaryTotals);
 
   function closeModal() {
     document.getElementById('modal').classList.remove('open');
